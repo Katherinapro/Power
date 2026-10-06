@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Что сейчас в моей власти?</title>
+    <style>
+        :root {
+            --bg-color: #fcfbf9;
+            --text-main: #2c3e50;
+            --text-muted: #627d98;
+            --accent: #8ba3a1;
+            --accent-light: #e3ebe9;
+            --zone-none: #f0f4f8;
+            --zone-influence: #fdf6e3;
+            --zone-power: #e8f4f0;
+            --border-radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Прогресс-бар */
+        .progress-bar {
+            height: 4px;
+            background: var(--accent-light);
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Экраны */
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: -10px;
+        }
+
+        /* Поля ввода */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d9e0;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: 15px;
+            color: var(--text-main);
+            background: #fff;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            width: 100%;
+        }
+        .btn-primary {
+            background-color: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #758d8b;
+        }
+        .btn-secondary {
+            background-color: #fff;
+            color: var(--text-main);
+            border: 1px solid #d1d9e0;
+        }
+        .btn-secondary:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Карточки тревог */
+        .anxiety-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .anxiety-card {
+            background: #fff;
+            padding: 14px 16px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .anxiety-card:active {
+            cursor: grabbing;
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        }
+        .anxiety-card .remove-btn {
+            background: none;
+            border: none;
+            color: #c0c8d0;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+        }
+        .anxiety-card .remove-btn:hover {
+            color: #e74c3c;
+        }
+
+        /* Зоны */
+        .zones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .zone {
+            background: var(--zone-none);
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            min-height: 100px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .zone.drag-over {
+            background: #e2e8f0;
+            border-color: var(--accent);
+        }
+        .zone-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .zone-title span {
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 12px;
+        }
+        .zone[data-zone="none"] { background: var(--zone-none); }
+        .zone[data-zone="influence"] { background: var(--zone-influence); border-color: #fde68a; }
+        .zone[data-zone="power"] { background: var(--zone-power); border-color: #a7f3d0; }
+
+        /* Мобильный фолбэк для перетаскивания */
+        .mobile-actions {
+            display: none;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .mobile-actions button {
+            flex: 1;
+            padding: 6px;
+            font-size: 11px;
+            border-radius: 8px;
+            border: 1px solid #d1d9e0;
+            background: #fff;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+        .mobile-actions button.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            .mobile-actions {
+                display: flex;
+            }
+            .anxiety-card {
+                cursor: pointer;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .anxiety-card .remove-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            .anxiety-card-wrapper {
+                position: relative;
+            }
+        }
+
+        /* Чек-бокс */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            background: #fff;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid #d1d9eаль0;
+        }
+        .checkbox-label input {
+           ше width: 18px;
+           </ height: 18px;
+            accent-color: var(--buttonaccent);
+        }
+
+        /* Результаты */
+        .result-block {
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        .result-block h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 5px;
+        }
+        .result-item {
+            font-size: 15px;
+            padding: 6px 0;
+            border-bottom: 1px solid #f8f8f8;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .quote {
+            font-style: italic;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+
+        /* Финальные контакты */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: #fff;
+            border: 1px solid #d1d9e0;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .contact-link:hover {
+            border-color: var(--accent);
+            background: var(--bg-color);
+        }
+
+        /* Кнопка Пауза */
+        .panic-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 15px rgba(139, 163, 161, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        .panic-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(44, 62, 80, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-content h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+        .modal-content .btn {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Прогресс-бар -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- ЭКРАН 1: Вступление -->
+        <div class="screen active" id="screen-1">
+            <div class="subtitle">Практика эмоциональной устойчивости</div>
+            <h1>Что сейчас в моей власти?</h1>
+            <p>Когда всё вокруг — сплошная карусель, и голова взрывается, сложно понять, за что схватиться. Эта практика — не волшебная таблетка, а способ выдохнуть и честно увидеть, где вы реально можете что-то изменить, а где — нет.</p>
+            <p>Тревога — это нормально. Твой мозг пытается тебя защитить. Не ругай себя за то, что мысли не останавливаются. Давай просто разложим их по полочкам.</p>
+            <button class="btn btn-primary" onclick="goToScreen(2)">Начать</button>
+        </div>
+
+        <!-- ЭКРАН 2: Выгрузка тревог -->
+        <div class="screen" id="screen-2">
+            <div class="subtitle">Шаг 1 из 4</div>
+            <h2>Сейчас меня тревожит...</h2>
+            <p>Напиши всё, что сейчас сидит в голове. Каждую мысль — отдельной строкой. Не фильтруй, пиши как есть. Выжата как лимон? Пиши как есть.</p>
+            
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="anxietyInput" placeholder="Например: апокалипсис, сын не сдал экзамен..." onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" style="width: auto; padding: 14px 20px;" onclick="addAnxiety()">+</button>
+            </div>
+            
+            <div class="anxiety-list" id="anxietyList"></div>
+            
+            <button class="btn btn-primary" onclick="goToScreen(3)" id="btnToStep2" disabled>Дальше</button>
+        </div>
+
+        <!-- ЭКРАН 3: Сортировка -->
+        <div class="screen" id="screen-3">
+            <div class="subtitle">Шаг 2 из 4</div>
+            <h2>Разложи по полочкам</h2>
+            <p>Посмотри на свои тревоги. Что из этого реально в твоей власти, а что — нет? Перетащи карточки (или нажми на кнопки под карточкой, если с телефона).</p>
+
+            <div class="zones-container">
+                <div class="zone" data-zone="none" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="zone-title">НЕ В МОЕЙ ВЛАСТИ <span>события • решения других • прогнозы</span></div>
+                    <div class="zone-cards" id="zone-none"></div>
+                </div>
+                <div class="zone" data-zone="influence" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="zone-title">ЗОНА ВЛИЯНИЯ <span>не контролирую, но могу влиять</span></div>
+                    <div class="zone-cards" id="zone-influence"></div>
+                </div>
+                <div class="zone" data-zone="power" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="zone-title">В МОЕЙ ВЛАСТИ <span>что я могу выбирать, менять или делать?</span></div>
+                    <div class="zone-cards" id="zone-power"></div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="goToScreen(4)" id="btnToStep3" disabled>Дальше</button>
+        </div>
+
+        <!-- ЭКРАН 4: Один шаг -->
+        <div class="screen" id="screen-4">
+            <div class="subtitle">Шаг 3 из 4</div>
+            <h2>Какой ОДИН шаг даст мне чуть больше устойчивости сегодня?</h2>
+            <p>Не нужно спасать мир. Выбери что-то маленькое, но реальное. То, что ты реально можешь сделать прямо сейчас.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Сегодня я могу</label>
+                    <input type="text" id="actionCan" placeholder="Например: позаниматься йогой" oninput="checkForm()">
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Сегодня я не могу повлиять на</label>
+                    <input type="text" id="actionCannot" placeholder="Например: то, что в мире апокалипсис" oninput="checkForm()">
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Но сегодня я могу</label>
+                    <input type="text" id="actionBut" placeholder="Например: сделать дыхательную практику" oninput="checkForm()">
+                </div>
+            </div>
+
+            <label class="checkbox-label">
+                <input type="checkbox" id="breathCheck">
+                🎧 Прикрепить к моему плану дыхательную практику (видео на YouTube)
+            </label>
+            
+            <button class="btn btn-primary" onclick="finish()" id="btnFinish" disabled>Завершить</button>
+        </div>
+
+        <!-- ЭКРАН 5: Результаты -->
+        <div class="screen" id="screen-5">
+            <div class="subtitle">Шаг 4 из 4</div>
+            <h2>Твои точки опоры</h2>
+            <p>Посмотри на то, что у тебя получилось. Сверху — то, что ты отпускаешь. Снизу — твоя зона влияния.</p>
+
+            <div class="result-block" id="resultContainer">
+                <!-- Заполняется через JS -->
+            </div>
+
+            <div class="quote">«Не всё находится под моим контролем. Но не всё находится вне моего влияния».</div>
+            
+            <button class="btn btn-primary" onclick="savePlan()">Сохранить план</button>
+            <button class="btn btn-secondary" onclick="copyLink()">Поделиться ссылкой</button>
+            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="goToScreen(6)">Д>
+        </div>
+
+        <!-- ЭКРАН 6: Финальные контакты -->
+        <div class="screen" id="screen-6">
+            <div class="subtitle">Инструменты и поддержка</div>
+            <h2>Если хочется копнуть глубже</h2>
+            <p>Эта практика — лишь один из инструментов. Если ты чувствуешь, что нужно больше опоры, вот что может помочь:</p>
+
+            <div class="contacts-grid">
+                <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank" class="contact-link">📊 Тест «Точки опоры»</a>
+                <a href="https://sevastsyanova-cell.github.io/wish/" target="_blank" class="contact-link">🎯 Калькулятор приоритетов</a>
+                <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank" class="contact-link">🧠 Выгрузка мусора</a>
+                <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="contact-link">🌿 Дыхательная практика</a>
+                <a href="https://t.me/+ZbtgpDqcnTVlNTA6" target="_blank" class="contact-link" style="grid-column: span 2;">💬 Мини-курс «Разрешаю себе чувствовать»</a>
+            </div>
+
+            <p style="margin-top: 20px;">Мои контакты, чтобы быть на связи:</p>
+            <div class="contacts-grid">
+                <a href="https://t.me/katerinasevstsyanova" target="_blank" class="contact-link">Telegram</a>
+                <a href="https://vk.ru/whatever505" target="_blank" class="contact-link">ВКонтакте</a>
+                <a href="https://t.me/vsemozhnomne" target="_blank" class="contact-link">Telegram-канал</a>
+                <a href="https://www.youtube.com/@ЕкатеринаСевостьянова_коуч" target="_blank" class="contact-link">YouTube</a>
+            </div>
+            
+            <button class="btn btn-secondary" style="margin-top: 20px;" onclick="restart()">Пройти заново</button>
+        </div>
+    </div>
+
+    <!-- Кнопка Пауза -->
+    <button class="panic-btn" onclick="openPanic()" title="Мне нужна передышка">🌿</button>
+
+    <!-- Модальное окно Паузы -->
+    <div class="modal-overlay" id="panicModal">
+        <div class="modal-content">
+            <h3>Ты можешь сделать паузу</h3>
+            <p>Если стало тяжело, просто выдохни. Давай сделаем короткую дыхательную практику, чтобы вернуть опору в тело.</p>
+            <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">Включить практику</a>
+            <button class="btn btn-secondary" onclick="closePanic()">Вернуться к практике</button>
+        </div>
+    </div>
+
+    <script>
+        // Состояние приложения
+        let state = {
+            screen: 1,
+            anxieties: [], // { id, text, zone: null }
+            form: { can: '', cannot: '', but: '', breath: false }
+        };
+
+        // Инициализация
+        function init() {
+            loadState();
+            render();
+        }
+
+        // Сохранение состояния
+        function saveState() {
+            localStorage.setItem('powerPracticeState', JSON.stringify(state));
+        }
+
+        // Загрузка состояния
+        function loadState() {
+            const saved = localStorage.getItem('powerPracticeState');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Ошибка загрузки состояния", e);
+                }
+            }
+        }
+
+        // Перерисовка интерфейса
+        function render() {
+            // Обновляем прогресс-бар
+            const progress = ((state.screen - 1) / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Переключаем экраны
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const activeScreen = document.getElementById(`screen-${state.screen}`);
+            if (activeScreen) activeScreen.classList.add('active');
+
+            // Рендер карточек на экране 2
+            if (state.screen === 2) {
+                renderAnxietyList();
+            }
+
+            // Рендер зон на экране 3
+            if (state.screen === 3) {
+                renderZones();
+            }
+
+            // Заполнение формы на экране 4
+            if (state.screen === 4) {
+                document.getElementById('actionCan').value = state.form.can;
+                document.getElementById('actionCannot').value = state.form.cannot;
+                document.getElementById('actionBut').value = state.form.but;
+                document.getElementById('breathCheck').checked = state.form.breath;
+                checkForm();
+            }
+
+            // Рендер результатов на экране 5
+            if (state.screen === 5) {
+                renderResults();
+            }
+        }
+
+        // Переход по экранам
+        function goToScreen(n) {
+            state.screen = n;
+            saveState();
+            render();
+            window.scrollTo(0, 0);
+        }
+
+        // --- ЛОГИКА ЭКРАНА 2 ---
+        function addAnxiety() {
+            const input = document.getElementById('anxietyInput');
+            const text = input.value.trim();
+            if (text) {
+                state.anxieties.push({ id: Date.now(), text: text, zone: null });
+                input.value = '';
+                saveState();
+                renderAnxietyList();
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') addAnxiety();
+        }
+
+        function removeAnxiety(id) {
+            state.anxieties = state.anxieties.filter(a => a.id !== id);
+            saveState();
+            renderAnxietyList();
+            renderZones(); // Обновить зоны, если карточка была там
+        }
+
+        function renderAnxietyList() {
+            const list = document.getElementById('anxietyList');
+            list.innerHTML = '';
+            const btnNext = document.getElementById('btnToStep2');
+            
+            if (state.anxieties.length === 0) {
+                btnNext.disabled = true;
+                return;
+            }
+
+            let allAssigned = true;
+
+            state.anxieties.forEach(a => {
+                // Если карточка еще не распределена, показываем её в списке на экране 2
+                if (!a.zone) {
+                    allAssigned = false;
+                    const card = document.createElement('div');
+                    card.className = 'anxiety-card-wrapper';
+                    card.innerHTML = `
+                        <div class="anxiety-card" draggable="true" ondragstart="dragStart(event, ${a.id})">
+                            <span>${a.text}</span>
+                            <button class="remove-btn" onclick="removeAnxiety(${a.id})">×</button>
+                        </div>
+                        <div class="mobile-actions">
+                            <button onclick="assignZone(${a.id}, 'none')">Не в моей власти</button>
+                            <button onclick="assignZone(${a.id}, 'influence')">Зона влияния</button>
+                            <button onclick="assignZone(${a.id}, 'power')">В моей власти</button>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                }
+            });
+
+            // Кнопка "Дальше" активна, если все карточки распределены
+            btnNext.disabled = !allAssigned && state.anxieties.length > 0;
+            if (state.anxieties.length > 0 && allAssigned) {
+                btnNext.disabled = false;
+            }
+        }
+
+        // --- ЛОГИКА ЭКРАНА 3 (DRAG & DROP) ---
+        let draggedId = null;
+
+        function dragStart(e, id) {
+            draggedId = id;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (draggedId) {
+                const zone = e.currentTarget.dataset.zone;
+                assignZone(draggedId, zone);
+                draggedId = null;
+            }
+        }
+
+        // Убираем подсветку при уходе
+        document.querySelectorAll('.zone').forEach(zone => {
+            zone.addEventListener('dragleave', (e) => {
+                e.currentTarget.classList.remove('drag-over');
+            });
+        });
+
+        // Мобильный фолбэк (и для десктопа тоже работает)
+        function assignZone(id, zone) {
+            const anxiety = state.anxieties.find(a => a.id === id);
+            if (anxiety) {
+                anxiety.zone = zone;
+                saveState();
+                renderAnxietyList(); // Убирает карточку с экрана 2
+                renderZones(); // Добавляет в зону на экране 3
+                checkStep3();
+            }
+        }
+
+        function renderZones() {
+            const zones = { none: '', influence: '', power: '' };
+            
+            state.anxieties.forEach(a => {
+                if (a.zone) {
+                    zones[a.zone] += `
+                        <div class="anxiety-card" style="margin-bottom: 8px; cursor: default;">
+                            <span>${a.text}</span>
+                            <button class="remove-btn" onclick="removeAnxiety(${a.id})">×</button>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('zone-none').innerHTML = zones.none;
+            document.getElementById('zone-influence').innerHTML = zones.influence;
+            document.getElementById('zone-power').innerHTML = zones.power;
+        }
+
+        function checkStep3() {
+            const btn = document.getElementById('btnToStep3');
+            const allAssigned = state.anxieties.every(a => a.zone !== null);
+            btn.disabled = !allAssigned || state.anxieties.length === 0;
+        }
+
+        // --- ЛОГИКА ЭКРАНА 4 ---
+        function checkForm() {
+            const can = document.getElementById('actionCan').value.trim();
+            const cannot = document.getElementById('actionCannot').value.trim();
+            const but = document.getElementById('actionBut').value.trim();
+            
+            state.form.can = can;
+            state.form.cannot = cannot;
+            state.form.but = but;
+            state.form.breath = document.getElementById('breathCheck').checked;
+            saveState();
+
+            const btn = document.getElementById('btnFinish');
+            btn.disabled = !(can && cannot && but);
+        }
+
+        // --- ЛОГИКА ЭКРАНА 5 (РЕЗУЛЬТАТЫ) ---
+        function finish() {
+            goToScreen(5);
+        }
+
+        function renderResults() {
+            const container = document.getElementById('resultContainer');
+            
+            let noneList = state.anxieties.filter(a => a.zone === 'none').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
+            let influenceList = state.anxieties.filter(a => a.zone === 'influence').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
+            let powerList = state.anxieties.filter(a => a.zone === 'power').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
+
+            let html = '';
+
+            if (noneList) {
+                html += `<h3>НЕ В МОЕЙ ВЛАСТИ (отпускаю)</h3>${noneList}`;
+            }
+            if (influenceList) {
+                html += `<h3 style="margin-top: 20px;">ЗОНА ВЛИЯНИЯ</h3>${influenceList}`;
+            }
+            if (powerList) {
+                html += `<h3 style="margin-top: 20px;">В МОЕЙ ВЛАСТИ</h3>${powerList}`;
+            }
+
+            html += `<h3 style="margin-top: 20px;">МОЙ ОДИН ШАГ НА СЕГОДНЯ</h3>`;
+            html += `<div class="result-item">✅ Сегодня я могу: <strong>${state.form.can}</strong></div>`;
+            html += `<div class="result-item">⏸️ Не могу повлиять на: <strong>${state.form.cannot}</strong></div>`;
+            html += `<div class="result-item">🌿 Но сегодня я могу: <strong>${state.form.but}</strong></div>`;
+
+            if (state.form.breath) {
+                html += `<div style="margin-top: 15px; padding: 15px; background: var(--accent-light); border-radius: var(--border-radius); text-align: center;">
+                    <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-main);">🎧 Твоя поддержка на сегодня:</p>
+                    <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">Включить дыхательную практику</a>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function savePlan() {
+            let text = `МОИ ТОЧКИ ОПОРЫ\n\n`;
+            text += `--- НЕ В МОЕЙ ВЛАСТИ ---\n`;
+            state.anxieties.filter(a => a.zone === 'none').forEach(a => text += `• ${a.text}\n`);
+            text += `\n--- ЗОНА ВЛИЯНИЯ ---\n`;
+            state.anxieties.filter(a => a.zone === 'influence').forEach(a => text += `• ${a.text}\n`);
+            text += `\n--- В МОЕЙ ВЛАСТИ ---\n`;
+            state.anxieties.filter(a => a.zone === 'power').forEach(a => text += `• ${a.text}\n`);
+            
+            text += `\n--- МОЙ ШАГ НА СЕГОДНЯ ---\n`;
+            text += `✅ Сегодня я могу: ${state.form.can}\n`;
+            text += `⏸️ Не могу повлиять на: ${state.form.cannot}\n`;
+            text += `🌿 Но сегодня я могу: ${state.form.but}\n`;
+            
+            if (state.form.breath) {
+                text += `\n🎧 Дыхательная практика: https://youtu.be/2MUIfe49USw`;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Твой план скопирован в буфер обмена! Можешь вставить его в заметки.');
+            }).catch(err => {
+                alert('Не удалось скопировать автоматически. Вот твой план:\n\n' + text);
+            });
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Ссылка на практику скопирована!');
+            });
+        }
+
+        // --- ЛОГИКА ПАУЗЫ ---
+        function openPanic() {
+            document.getElementById('panicModal').classList.add('active');
+        }
+
+        function closePanic() {
+            document.getElementById('panicModal').classList.remove('active');
+        }
+
+        // --- ПЕРЕЗАПУСК ---
+        function restart() {
+            if (confirm('Ты уверена, что хочешь начать заново? Все текущие данные будут удалены.')) {
+                state = {
+                    screen: 1,
+                    anxieties: [],
+                    form: { can: '', cannot: '', but: '', breath: false }
+                };
+                saveState();
+                render();
+            }
+        }
+
+        // Запуск
+        init();
+    </script>
+</body>
+</html>
