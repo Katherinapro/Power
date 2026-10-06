@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Что сейчас в моей власти?</title>
+
     <style>
+        /* ===== ПЕРЕМЕННЫЕ ===== */
         :root {
-            --bg-color: #fcfbf9;
-            --text-main: #2c3e50;
-            --text-muted: #627d98;
+            --bg: #fcfbf9;
+            --text: #2c3e50;
+            --muted: #627d98;
             --accent: #8ba3a1;
             --accent-light: #e3ebe9;
-            --zone-none: #f0f4f8;
-            --zone-influence: #fdf6e3;
-            --zone-power: #e8f4f0;
-            --border-radius: 16px;
+            --r: 16px;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
+        /* ===== БАЗА ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -27,9 +27,9 @@
         }
 
         body {
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
             padding: 20px;
             display: flex;
@@ -37,7 +37,7 @@
             min-height: 100vh;
         }
 
-        .app-container {
+        .app {
             width: 100%;
             max-width: 500px;
             display: flex;
@@ -45,42 +45,28 @@
             position: relative;
         }
 
-        /* Прогресс-бар */
-        .progress-bar {
-            height: 4px;
-            background: var(--accent-light);
-            border-radius: 2px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Экраны */
+        /* ===== ЭКРАНЫ ===== */
         .screen {
             display: none;
-            animation: fadeIn 0.4s ease;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
+            animation: fadeIn 0.4s;
         }
+
         .screen.active {
             display: flex;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
+        /* ===== ТИПОГРАФИЯ ===== */
         h1 {
             font-size: 26px;
             font-weight: 700;
             line-height: 1.2;
-            color: var(--text-main);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -88,49 +74,32 @@
         h2 {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         p {
             font-size: 15px;
-            color: var(--text-muted);
+            color: var(--muted);
         }
 
         .subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--accent);
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: -10px;
         }
 
-        /* Поля ввода */
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #d1d9e0;
-            border-radius: var(--border-radius);
-            font-family: var(--font-family);
-            font-size: 15px;
-            color: var(--text-main);
-            background: #fff;
-            transition: border-color 0.2s;
-            outline: none;
-        }
-        input[type="text"]:focus, textarea:focus {
-            border-color: var(--accent);
-        }
-
-        /* Кнопки */
+        /* ===== КНОПКИ ===== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 14px 24px;
             border: none;
-            border-radius: var(--border-radius);
-            font-family: var(--font-family);
+            border-radius: var(--r);
+            font-family: var(--font);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -138,202 +107,482 @@
             text-decoration: none;
             width: 100%;
         }
+
         .btn-primary {
-            background-color: var(--accent);
+            background: var(--accent);
             color: #fff;
         }
-        .btn-primary:hover {
-            background-color: #758d8b;
-        }
-        .btn-secondary {
-            background-color: #fff;
-            color: var(--text-main);
-            border: 1px solid #d1d9e0;
-        }
-        .btn-secondary:hover {
-            background-color: var(--bg-color);
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
         }
 
-        /* Карточки тревог */
-        .anxiety-list {
+        .btn-secondary {
+            background: #fff;
+            color: var(--text);
+            border: 1px solid #d1d9e0;
+        }
+
+        /* ===== ПРОГРЕСС-БАР ===== */
+        .progress {
+            height: 4px;
+            background: var(--accent-light);
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* ===== ВХОДНЫЙ ЭКРАН ===== */
+        .entry-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .entry-card {
+            background: #fff;
+            border-radius: var(--r);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 5px solid transparent;
+        }
+
+        .entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .entry-card:first-child { border-left-color: #e74c3c; }
+        .entry-card:last-child  { border-left-color: #f0c040; }
+
+        .entry-icon { font-size: 28px; margin-bottom: 8px; }
+        .entry-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+
+        .entry-desc {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .entry-action {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* ===== БЫСТРЫЙ ЛИСТ ===== */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            text-align: left;
+            font-family: var(--font);
+            margin-bottom: -5px;
+        }
+
+        .quick-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .quick-field label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .quick-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d9e0;
+            border-radius: var(--r);
+            font-family: var(--font);
+            font-size: 15px;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+        }
+
+        .quick-field input:focus { border-color: var(--accent); }
+
+        /* Круги */
+        .circle-outer {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: #eef2f6;
+            border: 2px dashed #94a3b8;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px 15px;
+            overflow: hidden;
+        }
+
+        .circle-outer .circle-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text);
+        }
+
+        .circle-outer .circle-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .circle-outer .circle-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 80%;
+        }
+
+        .circle-outer .circle-fields input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.8);
+            outline: none;
+        }
+
+        .circle-outer .circle-fields input:focus { border-color: var(--accent); }
+
+        .circle-inner {
+            width: 65%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: #e8f4f0;
+            border: 2px dashed #6ee7b7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .circle-inner .circle-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text);
+        }
+
+        .circle-inner .circle-sub {
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .circle-inner .circle-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 85%;
+        }
+
+        .circle-inner .circle-fields input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            font-family: var(--font);
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            outline: none;
+        }
+
+        .circle-inner .circle-fields input:focus { border-color: var(--accent); }
+
+        .arrow {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            padding: 10px 0;
+            letter-spacing: 0.3px;
+        }
+
+        .quick-footer {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .quick-footer p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* ===== КАРТА ПУТИ ===== */
+        .roadmap {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fff;
+            padding: 16px;
+            border-radius: var(--r);
+            box-shadow: var(--shadow);
+        }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .step-row .ico { font-size: 22px; line-height: 1; flex-shrink: 0; }
+        .step-row b { display: block; font-weight: 600; }
+        .step-row span { color: var(--muted); font-size: 13px; }
+
+        /* ===== КАРТОЧКИ ===== */
+        .cards-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
         }
-        .anxiety-card {
+
+        .card {
             background: #fff;
-            padding: 14px 16px;
-            border-radius: var(--border-radius);
+            padding: 14px;
+            border-radius: var(--r);
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 4px solid var(--accent);
+            animation: fadeIn 0.3s;
+        }
+
+        .card-text {
             font-size: 15px;
+            font-weight: 500;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: grab;
-            border-left: 4px solid var(--accent);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .anxiety-card:active {
-            cursor: grabbing;
-            transform: scale(1.02);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
-        }
-        .anxiety-card .remove-btn {
+
+        .card .del {
             background: none;
             border: none;
             color: #c0c8d0;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
-            padding: 0 5px;
+            padding: 0 4px;
             line-height: 1;
         }
-        .anxiety-card .remove-btn:hover {
-            color: #e74c3c;
+
+        .card .del:hover { color: #e74c3c; }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
         }
 
-        /* Зоны */
-        .zones-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .zone {
-            background: var(--zone-none);
-            border: 2px dashed #cbd5e1;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            min-height: 100px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .zone.drag-over {
-            background: #e2e8f0;
-            border-color: var(--accent);
-        }
-        .zone-title {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .zone-title span {
-            font-weight: 400;
-            text-transform: none;
-            letter-spacing: 0;
-            font-size: 12px;
-        }
-        .zone[data-zone="none"] { background: var(--zone-none); }
-        .zone[data-zone="influence"] { background: var(--zone-influence); border-color: #fde68a; }
-        .zone[data-zone="power"] { background: var(--zone-power); border-color: #a7f3d0; }
-
-        /* Мобильный фолбэк для перетаскивания */
-        .mobile-actions {
-            display: none;
-            gap: 8px;
-            margin-top: 5px;
-        }
-        .mobile-actions button {
+        .card-actions button {
             flex: 1;
-            padding: 6px;
+            padding: 9px 4px;
             font-size: 11px;
+            font-weight: 600;
             border-radius: 8px;
             border: 1px solid #d1d9e0;
             background: #fff;
             cursor: pointer;
-            font-family: var(--font-family);
-        }
-        .mobile-actions button.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
+            font-family: var(--font);
+            color: var(--text);
+            transition: all 0.15s;
+            line-height: 1.3;
         }
 
-        @media (max-width: 600px) {
-            .mobile-actions {
-                display: flex;
-            }
-            .anxiety-card {
-                cursor: pointer;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            .anxiety-card .remove-btn {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-            .anxiety-card-wrapper {
-                position: relative;
-            }
+        .card-actions button:active { transform: scale(0.96); }
+        .card-actions .btn-none:hover { background: #eef2f6; border-color: #94a3b8; }
+        .card-actions .btn-infl:hover { background: #fef9e7; border-color: #f0c040; }
+        .card-actions .btn-pow:hover  { background: #e8f4f0; border-color: #6ee7b7; }
+
+        /* ===== ЗОНЫ ===== */
+        .zones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* Чек-бокс */
-        .checkbox-label {
+        .zone {
+            border-radius: var(--r);
+            padding: 16px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .zone-head {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--text-main);
-            cursor: pointer;
-            background: #fff;
-            padding: 12px 16px;
-            border-radius: var(--border-radius);
-            border: 1px solid #d1d9eаль0;
-        }
-        .checkbox-label input {
-           ше width: 18px;
-           </ height: 18px;
-            accent-color: var(--buttonaccent);
+            gap: 12px;
         }
 
-        /* Результаты */
-        .result-block {
+        .zone-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .zone-title {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .zone-sub {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .zone-sub i {
+            color: #94a3b8;
+            font-style: italic;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .zone-none {
+            background: #eef2f6;
+            border: 1.5px dashed #94a3b8;
+        }
+        .zone-none .zone-icon { background: #94a3b8; color: #fff; }
+
+        .zone-influence {
+            background: #fef9e7;
+            border: 1.5px dashed #f0c040;
+        }
+        .zone-influence .zone-icon { background: #f0c040; color: #fff; }
+
+        .zone-power {
+            background: #e8f4f0;
+            border: 1.5px dashed #6ee7b7;
+        }
+        .zone-power .zone-icon { background: #6ee7b7; color: #fff; }
+
+        .zone-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dropped {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .dropped button {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        /* ===== ПОДСКАЗКА ===== */
+        .hint {
+            background: #fff;
+            border-radius: var(--r);
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .hint b { color: var(--text); }
+
+        /* ===== РЕЗУЛЬТАТЫ ===== */
+        .result {
             background: #fff;
             padding: 20px;
-            border-radius: var(--border-radius);
+            border-radius: var(--r);
             box-shadow: var(--shadow);
         }
-        .result-block h3 {
-            font-size: 14px;
+
+        .result h3 {
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-muted);
+            color: var(--muted);
             margin-bottom: 10px;
             border-bottom: 1px solid #f0f0f0;
             padding-bottom: 5px;
         }
+
         .result-item {
             font-size: 15px;
             padding: 6px 0;
             border-bottom: 1px solid #f8f8f8;
         }
-        .result-item:last-child {
-            border-bottom: none;
-        }
+
+        .result-item:last-child { border-bottom: none; }
+
         .quote {
             font-style: italic;
             text-align: center;
-            color: var(--text-muted);
+            color: var(--muted);
             font-size: 14px;
             margin-top: 10px;
             padding: 0 20px;
         }
 
-        /* Финальные контакты */
-        .contacts-grid {
+        /* ===== КОНТАКТЫ ===== */
+        .grid2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
         .contact-link {
             display: flex;
             align-items: center;
@@ -341,26 +590,27 @@
             padding: 12px;
             background: #fff;
             border: 1px solid #d1d9e0;
-            border-radius: var(--border-radius);
+            border-radius: var(--r);
             text-decoration: none;
-            color: var(--text-main);
+            color: var(--text);
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
             text-align: center;
         }
+
         .contact-link:hover {
             border-color: var(--accent);
-            background: var(--bg-color);
+            background: var(--bg);
         }
 
-        /* Кнопка Пауза */
-        .panic-btn {
+        /* ===== ПАУЗА ===== */
+        .panic {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: var(--accent);
             color: #fff;
@@ -370,18 +620,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             z-index: 100;
-            transition: transform 0.2s;
-        }
-        .panic-btn:hover {
-            transform: scale(1.1);
         }
 
-        /* Модальное окно */
-        .modal-overlay {
+        .modal {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             background: rgba(44, 62, 80, 0.6);
             display: none;
             align-items: center;
@@ -389,487 +634,657 @@
             z-index: 1000;
             padding: 20px;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-content {
-            background: var(--bg-color);
+
+        .modal.active { display: flex; }
+
+        .modal-box {
+            background: var(--bg);
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: var(--r);
             max-width: 400px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-        .modal-content h3 {
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-        .modal-content p {
-            margin-bottom: 20px;
-        }
-        .modal-content .btn {
-            margin-bottom: 10px;
-        }
+
+        .modal-box h3 { margin-bottom: 15px; font-size: 20px; }
+        .modal-box p { margin-bottom: 20px; }
+        .modal-box .btn { margin-bottom: 10px; }
     </style>
 </head>
 <body>
+<div class="app">
 
-    <div class="app-container">
-        <!-- Прогресс-бар -->
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+    <!-- ===== ВХОДНОЙ ЭКРАН ===== -->
+    <div class="screen active" id="screen-entry">
+        <div class="subtitle">Практика эмоциональной устойчивости</div>
+        <h1>Как сейчас твоя тревога?</h1>
 
-        <!-- ЭКРАН 1: Вступление -->
-        <div class="screen active" id="screen-1">
-            <div class="subtitle">Практика эмоциональной устойчивости</div>
-            <h1>Что сейчас в моей власти?</h1>
-            <p>Когда всё вокруг — сплошная карусель, и голова взрывается, сложно понять, за что схватиться. Эта практика — не волшебная таблетка, а способ выдохнуть и честно увидеть, где вы реально можете что-то изменить, а где — нет.</p>
-            <p>Тревога — это нормально. Твой мозг пытается тебя защитить. Не ругай себя за то, что мысли не останавливаются. Давай просто разложим их по полочкам.</p>
-            <button class="btn btn-primary" onclick="goToScreen(2)">Начать</button>
-        </div>
-
-        <!-- ЭКРАН 2: Выгрузка тревог -->
-        <div class="screen" id="screen-2">
-            <div class="subtitle">Шаг 1 из 4</div>
-            <h2>Сейчас меня тревожит...</h2>
-            <p>Напиши всё, что сейчас сидит в голове. Каждую мысль — отдельной строкой. Не фильтруй, пиши как есть. Выжата как лимон? Пиши как есть.</p>
-            
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="anxietyInput" placeholder="Например: апокалипсис, сын не сдал экзамен..." onkeypress="handleKeyPress(event)">
-                <button class="btn btn-primary" style="width: auto; padding: 14px 20px;" onclick="addAnxiety()">+</button>
-            </div>
-            
-            <div class="anxiety-list" id="anxietyList"></div>
-            
-            <button class="btn btn-primary" onclick="goToScreen(3)" id="btnToStep2" disabled>Дальше</button>
-        </div>
-
-        <!-- ЭКРАН 3: Сортировка -->
-        <div class="screen" id="screen-3">
-            <div class="subtitle">Шаг 2 из 4</div>
-            <h2>Разложи по полочкам</h2>
-            <p>Посмотри на свои тревоги. Что из этого реально в твоей власти, а что — нет? Перетащи карточки (или нажми на кнопки под карточкой, если с телефона).</p>
-
-            <div class="zones-container">
-                <div class="zone" data-zone="none" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="zone-title">НЕ В МОЕЙ ВЛАСТИ <span>события • решения других • прогнозы</span></div>
-                    <div class="zone-cards" id="zone-none"></div>
+        <div class="entry-cards">
+            <div class="entry-card" onclick="showQuick()">
+                <div class="entry-icon">🔴</div>
+                <div class="entry-title">МЕНЯ НАКРЫЛО</div>
+                <div class="entry-desc">
+                    Ком в горле. Поднимается тошнота. Тело трясёт.
+                    Не хватает воздуха — или забываю дышать.
                 </div>
-                <div class="zone" data-zone="influence" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="zone-title">ЗОНА ВЛИЯНИЯ <span>не контролирую, но могу влиять</span></div>
-                    <div class="zone-cards" id="zone-influence"></div>
-                </div>
-                <div class="zone" data-zone="power" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="zone-title">В МОЕЙ ВЛАСТИ <span>что я могу выбирать, менять или делать?</span></div>
-                    <div class="zone-cards" id="zone-power"></div>
-                </div>
-            </div>
-            
-            <button class="btn btn-primary" onclick="goToScreen(4)" id="btnToStep3" disabled>Дальше</button>
-        </div>
-
-        <!-- ЭКРАН 4: Один шаг -->
-        <div class="screen" id="screen-4">
-            <div class="subtitle">Шаг 3 из 4</div>
-            <h2>Какой ОДИН шаг даст мне чуть больше устойчивости сегодня?</h2>
-            <p>Не нужно спасать мир. Выбери что-то маленькое, но реальное. То, что ты реально можешь сделать прямо сейчас.</p>
-
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Сегодня я могу</label>
-                    <input type="text" id="actionCan" placeholder="Например: позаниматься йогой" oninput="checkForm()">
-                </div>
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Сегодня я не могу повлиять на</label>
-                    <input type="text" id="actionCannot" placeholder="Например: то, что в мире апокалипсис" oninput="checkForm()">
-                </div>
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block;">Но сегодня я могу</label>
-                    <input type="text" id="actionBut" placeholder="Например: сделать дыхательную практику" oninput="checkForm()">
-                </div>
+                <div class="entry-action">Срочно выдохнуть →</div>
             </div>
 
-            <label class="checkbox-label">
-                <input type="checkbox" id="breathCheck">
-                🎧 Прикрепить к моему плану дыхательную практику (видео на YouTube)
-            </label>
-            
-            <button class="btn btn-primary" onclick="finish()" id="btnFinish" disabled>Завершить</button>
-        </div>
-
-        <!-- ЭКРАН 5: Результаты -->
-        <div class="screen" id="screen-5">
-            <div class="subtitle">Шаг 4 из 4</div>
-            <h2>Твои точки опоры</h2>
-            <p>Посмотри на то, что у тебя получилось. Сверху — то, что ты отпускаешь. Снизу — твоя зона влияния.</p>
-
-            <div class="result-block" id="resultContainer">
-                <!-- Заполняется через JS -->
+            <div class="entry-card" onclick="showDeep()">
+                <div class="entry-icon">🟡</div>
+                <div class="entry-title">ТРЕВОГА ФОНОМ</div>
+                <div class="entry-desc">
+                    Тело напряжено. Мысли крутятся, крутятся.
+                    Карусель. Усталость.
+                </div>
+                <div class="entry-action">Разобраться →</div>
             </div>
-
-            <div class="quote">«Не всё находится под моим контролем. Но не всё находится вне моего влияния».</div>
-            
-            <button class="btn btn-primary" onclick="savePlan()">Сохранить план</button>
-            <button class="btn btn-secondary" onclick="copyLink()">Поделиться ссылкой</button>
-            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="goToScreen(6)">Д>
-        </div>
-
-        <!-- ЭКРАН 6: Финальные контакты -->
-        <div class="screen" id="screen-6">
-            <div class="subtitle">Инструменты и поддержка</div>
-            <h2>Если хочется копнуть глубже</h2>
-            <p>Эта практика — лишь один из инструментов. Если ты чувствуешь, что нужно больше опоры, вот что может помочь:</p>
-
-            <div class="contacts-grid">
-                <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank" class="contact-link">📊 Тест «Точки опоры»</a>
-                <a href="https://sevastsyanova-cell.github.io/wish/" target="_blank" class="contact-link">🎯 Калькулятор приоритетов</a>
-                <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank" class="contact-link">🧠 Выгрузка мусора</a>
-                <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="contact-link">🌿 Дыхательная практика</a>
-                <a href="https://t.me/+ZbtgpDqcnTVlNTA6" target="_blank" class="contact-link" style="grid-column: span 2;">💬 Мини-курс «Разрешаю себе чувствовать»</a>
-            </div>
-
-            <p style="margin-top: 20px;">Мои контакты, чтобы быть на связи:</p>
-            <div class="contacts-grid">
-                <a href="https://t.me/katerinasevstsyanova" target="_blank" class="contact-link">Telegram</a>
-                <a href="https://vk.ru/whatever505" target="_blank" class="contact-link">ВКонтакте</a>
-                <a href="https://t.me/vsemozhnomne" target="_blank" class="contact-link">Telegram-канал</a>
-                <a href="https://www.youtube.com/@ЕкатеринаСевостьянова_коуч" target="_blank" class="contact-link">YouTube</a>
-            </div>
-            
-            <button class="btn btn-secondary" style="margin-top: 20px;" onclick="restart()">Пройти заново</button>
         </div>
     </div>
 
-    <!-- Кнопка Пауза -->
-    <button class="panic-btn" onclick="openPanic()" title="Мне нужна передышка">🌿</button>
+    <!-- ===== БЫСТРЫЙ ЛИСТ (острая тревога) ===== -->
+    <div class="screen" id="screen-quick">
+        <button class="back-btn" onclick="showEntry()">← Назад</button>
+        <h1>Что сейчас в моей власти?</h1>
+        <p>Выдохни. Ты справляешься. Просто разложи то, что накрыло.</p>
 
-    <!-- Модальное окно Паузы -->
-    <div class="modal-overlay" id="panicModal">
-        <div class="modal-content">
-            <h3>Ты можешь сделать паузу</h3>
-            <p>Если стало тяжело, просто выдохни. Давай сделаем короткую дыхательную практику, чтобы вернуть опору в тело.</p>
-            <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">Включить практику</a>
-            <button class="btn btn-secondary" onclick="closePanic()">Вернуться к практике</button>
+        <div class="quick-field">
+            <label>Сейчас меня тревожит...</label>
+            <input type="text" id="q-trigger" placeholder="Напиши, что накрыло">
+        </div>
+
+        <!-- Круги -->
+        <div class="circle-outer">
+            <div class="circle-title">НЕ В МОЕЙ ВЛАСТИ</div>
+            <div class="circle-sub">События, другие люди, будущее</div>
+            <div class="circle-fields">
+                <input type="text" placeholder="Например: апокалипсис">
+                <input type="text">
+                <input type="text">
+            </div>
+
+            <div class="circle-inner">
+                <div class="circle-title">В МОЕЙ ВЛАСТИ</div>
+                <div class="circle-sub">Что я могу выбирать, менять или делать</div>
+                <div class="circle-fields">
+                    <input type="text" placeholder="Например: йога">
+                    <input type="text">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow">Не контролировать мыслями → действовать там, где могу</div>
+
+        <h2>Какой ОДИН шаг даст мне чуть больше устойчивости сегодня?</h2>
+
+        <div class="quick-field">
+            <label>Сегодня я могу</label>
+            <input type="text" id="q-can">
+        </div>
+        <div class="quick-field">
+            <label>Сегодня я не могу повлиять на</label>
+            <input type="text" id="q-cannot">
+        </div>
+        <div class="quick-field">
+            <label>Но сегодня я могу</label>
+            <input type="text" id="q-but">
+        </div>
+
+        <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">
+            🌿 Включить дыхательную практику
+        </a>
+
+        <div class="quick-footer">
+            <p>Стало чуть легче? Хочешь разобраться глубже?</p>
+            <button class="btn btn-secondary" onclick="showDeep()">
+                → Перейти к глубокой практике
+            </button>
         </div>
     </div>
 
-    <script>
-        // Состояние приложения
-        let state = {
-            screen: 1,
-            anxieties: [], // { id, text, zone: null }
-            form: { can: '', cannot: '', but: '', breath: false }
-        };
+    <!-- ===== ГЛУБОКАЯ ПРАКТИКА. ШАГ 1 ===== -->
+    <div class="screen" id="s1">
+        <div class="progress">
+            <div class="progress-fill" id="bar"></div>
+        </div>
+        <div class="subtitle">Практика эмоциональной устойчивости</div>
+        <h1>Что сейчас в моей власти?</h1>
+        <p>
+            Когда всё вокруг — карусель, и голова взрывается,
+            сложно понять, за что схватиться. Эта практика
+            поможет разложить тревоги по полочкам и найти опору.
+        </p>
 
-        // Инициализация
-        function init() {
-            loadState();
-            render();
-        }
+        <div class="roadmap">
+            <div class="step-row">
+                <div class="ico">📝</div>
+                <div>
+                    <b>Шаг 1. Выпиши, что тревожит</b>
+                    <span>Просто выгрузи всё из головы</span>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="ico">🎯</div>
+                <div>
+                    <b>Шаг 2. Разложи по трём зонам</b>
+                    <span>Что я контролирую, а что — нет</span>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="ico">✅</div>
+                <div>
+                    <b>Шаг 3. Выбери один шаг на сегодня</b>
+                    <span>Маленький, но реальный</span>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="ico">💾</div>
+                <div>
+                    <b>Шаг 4. Сохрани свой план</b>
+                    <span>Вернёшься к нему, когда накроет</span>
+                </div>
+            </div>
+        </div>
 
-        // Сохранение состояния
-        function saveState() {
-            localStorage.setItem('powerPracticeState', JSON.stringify(state));
-        }
+        <p style="font-size:13px;">
+            Это займёт 5–7 минут. Тревога — это нормально.
+            Твой мозг пытается тебя защитить. Не ругай себя за то,
+            что мысли не останавливаются. Просто разберём их по порядку.
+        </p>
 
-        // Загрузка состояния
-        function loadState() {
-            const saved = localStorage.getItem('powerPracticeState');
-            if (saved) {
-                try {
-                    state = JSON.parse(saved);
-                } catch (e) {
-                    console.error("Ошибка загрузки состояния", e);
-                }
-            }
-        }
+        <button class="btn btn-primary" onclick="go(2)">Начать</button>
+    </div>
 
-        // Перерисовка интерфейса
-        function render() {
-            // Обновляем прогресс-бар
-            const progress = ((state.screen - 1) / 5) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+    <!-- ===== ШАГ 2: ВЫГРУЗКА ===== -->
+    <div class="screen" id="s2">
+        <div class="subtitle">Шаг 1 из 4</div>
+        <h2>Сейчас меня тревожит...</h2>
+        <p>Напиши всё, что сейчас сидит в голове. Каждую мысль — отдельно.</p>
 
-            // Переключаем экраны
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const activeScreen = document.getElementById(`screen-${state.screen}`);
-            if (activeScreen) activeScreen.classList.add('active');
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="input"
+                   placeholder="Например: апокалипсис, экзамен сына..."
+                   onkeypress="if(event.key==='Enter')add()">
+            <button class="btn btn-primary" style="width:auto; padding:14px 20px;" onclick="add()">+</button>
+        </div>
 
-            // Рендер карточек на экране 2
-            if (state.screen === 2) {
-                renderAnxietyList();
-            }
+        <div class="cards-list" id="list"></div>
 
-            // Рендер зон на экране 3
-            if (state.screen === 3) {
-                renderZones();
-            }
+        <button class="btn btn-primary" id="next2" onclick="go(3)" disabled>Дальше</button>
+    </div>
 
-            // Заполнение формы на экране 4
-            if (state.screen === 4) {
-                document.getElementById('actionCan').value = state.form.can;
-                document.getElementById('actionCannot').value = state.form.cannot;
-                document.getElementById('actionBut').value = state.form.but;
-                document.getElementById('breathCheck').checked = state.form.breath;
-                checkForm();
-            }
+    <!-- ===== ШАГ 3: СОРТИРОВКА ===== -->
+    <div class="screen" id="s3">
+        <div class="subtitle">Шаг 2 из 4</div>
+        <h2>Разложи по полочкам</h2>
+        <p>Нажми на кнопку под каждой карточкой — и она отправится в нужную зону.</p>
 
-            // Рендер результатов на экране 5
-            if (state.screen === 5) {
-                renderResults();
-            }
-        }
+        <div class="hint">
+            💡 <b>Куда что класть?</b><br>
+            🔵 <b>Я отпускаю</b> — события, другие люди, будущее.<br>
+            🟡 <b>Я влияю</b> — не управляю, но могу выбрать реакцию.<br>
+            🟢 <b>Я делаю</b> — мои действия и мой выбор.
+        </div>
 
-        // Переход по экранам
-        function goToScreen(n) {
-            state.screen = n;
-            saveState();
-            render();
-            window.scrollTo(0, 0);
-        }
-
-        // --- ЛОГИКА ЭКРАНА 2 ---
-        function addAnxiety() {
-            const input = document.getElementById('anxietyInput');
-            const text = input.value.trim();
-            if (text) {
-                state.anxieties.push({ id: Date.now(), text: text, zone: null });
-                input.value = '';
-                saveState();
-                renderAnxietyList();
-            }
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') addAnxiety();
-        }
-
-        function removeAnxiety(id) {
-            state.anxieties = state.anxieties.filter(a => a.id !== id);
-            saveState();
-            renderAnxietyList();
-            renderZones(); // Обновить зоны, если карточка была там
-        }
-
-        function renderAnxietyList() {
-            const list = document.getElementById('anxietyList');
-            list.innerHTML = '';
-            const btnNext = document.getElementById('btnToStep2');
-            
-            if (state.anxieties.length === 0) {
-                btnNext.disabled = true;
-                return;
-            }
-
-            let allAssigned = true;
-
-            state.anxieties.forEach(a => {
-                // Если карточка еще не распределена, показываем её в списке на экране 2
-                if (!a.zone) {
-                    allAssigned = false;
-                    const card = document.createElement('div');
-                    card.className = 'anxiety-card-wrapper';
-                    card.innerHTML = `
-                        <div class="anxiety-card" draggable="true" ondragstart="dragStart(event, ${a.id})">
-                            <span>${a.text}</span>
-                            <button class="remove-btn" onclick="removeAnxiety(${a.id})">×</button>
+        <div class="zones">
+            <!-- Зона 1 -->
+            <div class="zone zone-none">
+                <div class="zone-head">
+                    <div class="zone-icon">🔵</div>
+                    <div>
+                        <div class="zone-title">Я ОТПУСКАЮ</div>
+                        <div class="zone-sub">
+                            (это не моя зона влияния) События, другие люди, будущее
+                            <i>Например: апокалипсис, курс доллара, экзамен сына</i>
                         </div>
-                        <div class="mobile-actions">
-                            <button onclick="assignZone(${a.id}, 'none')">Не в моей власти</button>
-                            <button onclick="assignZone(${a.id}, 'influence')">Зона влияния</button>
-                            <button onclick="assignZone(${a.id}, 'power')">В моей власти</button>
+                    </div>
+                </div>
+                <div class="zone-cards" id="z-none"></div>
+            </div>
+
+            <!-- Зона 2 -->
+            <div class="zone zone-influence">
+                <div class="zone-head">
+                    <div class="zone-icon">🟡</div>
+                    <div>
+                        <div class="zone-title">Я ВЛИЯЮ</div>
+                        <div class="zone-sub">
+                            (то, что я могу изменить) Не управляю, но могу выбрать реакцию
+                            <i>Например: пересмотреть бюджет, поговорить с учителем</i>
                         </div>
-                    `;
-                    list.appendChild(card);
-                }
-            });
+                    </div>
+                </div>
+                <div class="zone-cards" id="z-infl"></div>
+            </div>
 
-            // Кнопка "Дальше" активна, если все карточки распределены
-            btnNext.disabled = !allAssigned && state.anxieties.length > 0;
-            if (state.anxieties.length > 0 && allAssigned) {
-                btnNext.disabled = false;
-            }
+            <!-- Зона 3 -->
+            <div class="zone zone-power">
+                <div class="zone-head">
+                    <div class="zone-icon">🟢</div>
+                    <div>
+                        <div class="zone-title">Я ДЕЛАЮ</div>
+                        <div class="zone-sub">
+                            (какие действия я могу сделать) Мои шаги и мой выбор
+                            <i>Например: сделать дыхательную практику, позаниматься йогой</i>
+                        </div>
+                    </div>
+                </div>
+                <div class="zone-cards" id="z-pow"></div>
+            </div>
+        </div>
+
+        <!-- Пул нераспределённых карточек -->
+        <div id="poolSection">
+            <div class="hint"
+                 style="background:transparent; border:none; padding:0;
+                        font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">
+                Твои карточки:
+            </div>
+            <div class="cards-list" id="pool"></div>
+        </div>
+
+        <button class="btn btn-primary" id="next3" onclick="go(4)" disabled>Дальше</button>
+    </div>
+
+    <!-- ===== ШАГ 4: ОДИН ШАГ ===== -->
+    <div class="screen" id="s4">
+        <div class="subtitle">Шаг 3 из 4</div>
+        <h2>Какой один шаг даст мне чуть больше устойчивости сегодня?</h2>
+        <p>Не нужно спасать мир. Выбери что-то маленькое, но реальное.
+           То, что ты реально можешь сделать прямо сейчас.</p>
+
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <div>
+                <label style="font-size:13px; font-weight:600; color:var(--muted); margin-bottom:5px; display:block;">
+                    Сегодня я могу
+                </label>
+                <input type="text" id="f-can"
+                       placeholder="Например: позаниматься йогой"
+                       oninput="saveForm()">
+            </div>
+            <div>
+                <label style="font-size:13px; font-weight:600; color:var(--muted); margin-bottom:5px; display:block;">
+                    Сегодня я не могу повлиять на
+                </label>
+                <input type="text" id="f-cannot"
+                       placeholder="Например: то, что в мире апокалипсис"
+                       oninput="saveForm()">
+            </div>
+            <div>
+                <label style="font-size:13px; font-weight:600; color:var(--muted); margin-bottom:5px; display:block;">
+                    Но сегодня я могу
+                </label>
+                <input type="text" id="f-but"
+                       placeholder="Например: сделать дыхательную практику"
+                       oninput="saveForm()">
+            </div>
+        </div>
+
+        <label class="hint"
+               style="display:flex; align-items:center; gap:10px; cursor:pointer; background:#fff;">
+            <input type="checkbox" id="f-breath"
+                   style="width:18px; height:18px; accent-color:var(--accent);"
+                   onchange="saveForm()">
+            <span>🎧 Прикрепить к моему плану дыхательную практику</span>
+        </label>
+
+        <button class="btn btn-primary" id="next4" onclick="finish()" disabled>Завершить</button>
+    </div>
+
+    <!-- ===== ШАГ 5: РЕЗУЛЬТАТЫ ===== -->
+    <div class="screen" id="s5">
+        <div class="subtitle">Шаг 4 из 4</div>
+        <h2>Твои точки опоры</h2>
+        <p>Посмотри на то, что у тебя получилось.</p>
+
+        <div class="result" id="res"></div>
+
+        <div class="quote">
+            «Не всё находится под моим контролем.
+            Но не всё находится вне моего влияния».
+        </div>
+
+        <button class="btn btn-primary" onclick="savePlan()">Сохранить план</button>
+        <button class="btn btn-secondary" onclick="copyLink()">Поделиться ссылкой</button>
+        <button class="btn btn-secondary" onclick="go(6)">Дальше</button>
+    </div>
+
+    <!-- ===== ШАГ 6: ИНСТРУМЕНТЫ ===== -->
+    <div class="screen" id="s6">
+        <div class="subtitle">Инструменты и поддержка</div>
+        <h2>Если хочется копнуть глубже</h2>
+        <p>Эта практика — лишь один из инструментов.
+           Если нужно больше опоры, вот что поможет:</p>
+
+        <div class="grid2">
+            <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank" class="contact-link">
+                📊 Тест «Точки опоры»
+            </a>
+            <a href="https://sevastsyanova-cell.github.io/wish/" target="_blank" class="contact-link">
+                🎯 Калькулятор приоритетов
+            </a>
+            <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank" class="contact-link">
+                🧠 Выгрузка мусора
+            </a>
+            <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="contact-link">
+                🌿 Дыхательная практика
+            </a>
+            <a href="https://t.me/+ZbtgpDqcnTVlNTA6" target="_blank" class="contact-link"
+               style="grid-column: span 2;">
+                💬 Мини-курс «Разрешаю себе чувствовать»
+            </a>
+        </div>
+
+        <p style="margin-top:20px;">Мои контакты, чтобы быть на связи:</p>
+
+        <div class="grid2">
+            <a href="https://t.me/katerinasevstsyanova" target="_blank" class="contact-link">Telegram</a>
+            <a href="https://vk.ru/whatever505" target="_blank" class="contact-link">ВКонтакте</a>
+            <a href="https://t.me/vsemozhnomne" target="_blank" class="contact-link">Telegram-канал</a>
+            <a href="https://www.youtube.com/@ЕкатеринаСевостьянова_коуч" target="_blank" class="contact-link">YouTube</a>
+        </div>
+
+        <button class="btn btn-secondary" onclick="showEntry()">Вернуться на главную</button>
+    </div>
+
+</div>
+
+<!-- Плавающая кнопка паузы -->
+<button class="panic"
+        onclick="document.getElementById('panicModal').classList.add('active')"
+        title="Пауза">🌿</button>
+
+<!-- Модальное окно паузы -->
+<div class="modal" id="panicModal">
+    <div class="modal-box">
+        <h3>Ты можешь сделать паузу</h3>
+        <p>Если стало тяжело, просто выдохни.
+           Давай сделаем короткую дыхательную практику.</p>
+        <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">
+            Включить практику
+        </a>
+        <button class="btn btn-secondary"
+                onclick="document.getElementById('panicModal').classList.remove('active')">
+            Вернуться
+        </button>
+    </div>
+</div>
+
+<script>
+    /* ===== СОСТОЯНИЕ ===== */
+    let state = {
+        screen: 1,
+        anxieties: [],
+        form: { can: '', cannot: '', but: '', breath: false }
+    };
+
+    /* ===== ИНИЦИАЛИЗАЦИЯ ===== */
+    function init() {
+        const saved = localStorage.getItem('powerPractice_v3');
+        if (saved) {
+            try { state = JSON.parse(saved); } catch (e) {}
+        }
+        showEntry();
+    }
+
+    /* ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ===== */
+    function showEntry() {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById('screen-entry').classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function showQuick() {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById('screen-quick').classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function showDeep() {
+        state.screen = 1;
+        save();
+        render();
+    }
+
+    /* ===== СОХРАНЕНИЕ ===== */
+    function save() {
+        localStorage.setItem('powerPractice_v3', JSON.stringify(state));
+    }
+
+    /* ===== РЕНДЕР ГЛУБОКОЙ ПРАКТИКИ ===== */
+    function render() {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        const el = document.getElementById('s' + state.screen);
+        if (el) el.classList.add('active');
+
+        if (state.screen === 2) renderList();
+        if (state.screen === 3) renderZones();
+
+        if (state.screen === 4) {
+            document.getElementById('f-can').value = state.form.can;
+            document.getElementById('f-cannot').value = state.form.cannot;
+            document.getElementById('f-but').value = state.form.but;
+            document.getElementById('f-breath').checked = state.form.breath;
+            checkForm();
         }
 
-        // --- ЛОГИКА ЭКРАНА 3 (DRAG & DROP) ---
-        let draggedId = null;
+        if (state.screen === 5) renderResults();
 
-        function dragStart(e, id) {
-            draggedId = id;
-            e.dataTransfer.effectAllowed = 'move';
+        const bar = document.getElementById('bar');
+        if (bar) bar.style.width = ((state.screen - 1) / 5 * 100) + '%';
+
+        window.scrollTo(0, 0);
+    }
+
+    function go(n) {
+        state.screen = n;
+        save();
+        render();
+    }
+
+    /* ===== ШАГ 2: СПИСОК ===== */
+    function add() {
+        const inp = document.getElementById('input');
+        const t = inp.value.trim();
+        if (t) {
+            state.anxieties.push({ id: Date.now() + Math.random(), text: t, zone: null });
+            inp.value = '';
+            save();
+            renderList();
+        }
+    }
+
+    function del(id) {
+        state.anxieties = state.anxieties.filter(a => a.id !== id);
+        save();
+        renderList();
+        if (state.screen === 3) renderZones();
+    }
+
+    function renderList() {
+        const list = document.getElementById('list');
+        list.innerHTML = '';
+        const btn = document.getElementById('next2');
+
+        if (state.anxieties.length === 0) {
+            btn.disabled = true;
+            return;
         }
 
-        function allowDrop(e) {
-            e.preventDefault();
-            e.currentTarget.classList.add('drag-over');
-        }
+        state.anxieties.forEach(a => {
+            const c = document.createElement('div');
+            c.className = 'card';
+            c.innerHTML = `
+                <div class="card-text">
+                    <span>${a.text}</span>
+                    <button class="del" onclick="del(${a.id})">×</button>
+                </div>`;
+            list.appendChild(c);
+        });
 
-        function drop(e) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
-            if (draggedId) {
-                const zone = e.currentTarget.dataset.zone;
-                assignZone(draggedId, zone);
-                draggedId = null;
-            }
-        }
+        btn.disabled = false;
+    }
 
-        // Убираем подсветку при уходе
-        document.querySelectorAll('.zone').forEach(zone => {
-            zone.addEventListener('dragleave', (e) => {
-                e.currentTarget.classList.remove('drag-over');
+    /* ===== ШАГ 3: ЗОНЫ ===== */
+    function assign(id, zone) {
+        const a = state.anxieties.find(x => x.id === id);
+        if (a) {
+            a.zone = zone;
+            save();
+            renderZones();
+        }
+    }
+
+    function unassign(id) {
+        const a = state.anxieties.find(x => x.id === id);
+        if (a) {
+            a.zone = null;
+            save();
+            renderZones();
+        }
+    }
+
+    function renderZones() {
+        const zones = { none: [], infl: [], pow: [] };
+        state.anxieties.forEach(a => {
+            if (a.zone) zones[a.zone].push(a);
+        });
+
+        ['none', 'infl', 'pow'].forEach(z => {
+            const el = document.getElementById('z-' + z);
+            el.innerHTML = '';
+            zones[z].forEach(a => {
+                const c = document.createElement('div');
+                c.className = 'dropped';
+                c.innerHTML = `
+                    <span>${a.text}</span>
+                    <button onclick="unassign(${a.id})">×</button>`;
+                el.appendChild(c);
             });
         });
 
-        // Мобильный фолбэк (и для десктопа тоже работает)
-        function assignZone(id, zone) {
-            const anxiety = state.anxieties.find(a => a.id === id);
-            if (anxiety) {
-                anxiety.zone = zone;
-                saveState();
-                renderAnxietyList(); // Убирает карточку с экрана 2
-                renderZones(); // Добавляет в зону на экране 3
-                checkStep3();
-            }
+        const pool = document.getElementById('pool');
+        pool.innerHTML = '';
+        const unassigned = state.anxieties.filter(a => !a.zone);
+
+        if (unassigned.length === 0) {
+            document.getElementById('poolSection').style.display = 'none';
+        } else {
+            document.getElementById('poolSection').style.display = 'block';
         }
 
-        function renderZones() {
-            const zones = { none: '', influence: '', power: '' };
-            
-            state.anxieties.forEach(a => {
-                if (a.zone) {
-                    zones[a.zone] += `
-                        <div class="anxiety-card" style="margin-bottom: 8px; cursor: default;">
-                            <span>${a.text}</span>
-                            <button class="remove-btn" onclick="removeAnxiety(${a.id})">×</button>
-                        </div>
-                    `;
-                }
-            });
-
-            document.getElementById('zone-none').innerHTML = zones.none;
-            document.getElementById('zone-influence').innerHTML = zones.influence;
-            document.getElementById('zone-power').innerHTML = zones.power;
-        }
-
-        function checkStep3() {
-            const btn = document.getElementById('btnToStep3');
-            const allAssigned = state.anxieties.every(a => a.zone !== null);
-            btn.disabled = !allAssigned || state.anxieties.length === 0;
-        }
-
-        // --- ЛОГИКА ЭКРАНА 4 ---
-        function checkForm() {
-            const can = document.getElementById('actionCan').value.trim();
-            const cannot = document.getElementById('actionCannot').value.trim();
-            const but = document.getElementById('actionBut').value.trim();
-            
-            state.form.can = can;
-            state.form.cannot = cannot;
-            state.form.but = but;
-            state.form.breath = document.getElementById('breathCheck').checked;
-            saveState();
-
-            const btn = document.getElementById('btnFinish');
-            btn.disabled = !(can && cannot && but);
-        }
-
-        // --- ЛОГИКА ЭКРАНА 5 (РЕЗУЛЬТАТЫ) ---
-        function finish() {
-            goToScreen(5);
-        }
-
-        function renderResults() {
-            const container = document.getElementById('resultContainer');
-            
-            let noneList = state.anxieties.filter(a => a.zone === 'none').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
-            let influenceList = state.anxieties.filter(a => a.zone === 'influence').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
-            let powerList = state.anxieties.filter(a => a.zone === 'power').map(a => `<div class="result-item">• ${a.text}</div>`).join('');
-
-            let html = '';
-
-            if (noneList) {
-                html += `<h3>НЕ В МОЕЙ ВЛАСТИ (отпускаю)</h3>${noneList}`;
-            }
-            if (influenceList) {
-                html += `<h3 style="margin-top: 20px;">ЗОНА ВЛИЯНИЯ</h3>${influenceList}`;
-            }
-            if (powerList) {
-                html += `<h3 style="margin-top: 20px;">В МОЕЙ ВЛАСТИ</h3>${powerList}`;
-            }
-
-            html += `<h3 style="margin-top: 20px;">МОЙ ОДИН ШАГ НА СЕГОДНЯ</h3>`;
-            html += `<div class="result-item">✅ Сегодня я могу: <strong>${state.form.can}</strong></div>`;
-            html += `<div class="result-item">⏸️ Не могу повлиять на: <strong>${state.form.cannot}</strong></div>`;
-            html += `<div class="result-item">🌿 Но сегодня я могу: <strong>${state.form.but}</strong></div>`;
-
-            if (state.form.breath) {
-                html += `<div style="margin-top: 15px; padding: 15px; background: var(--accent-light); border-radius: var(--border-radius); text-align: center;">
-                    <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-main);">🎧 Твоя поддержка на сегодня:</p>
-                    <a href="https://youtu.be/2MUIfe49USw" target="_blank" class="btn btn-primary">Включить дыхательную практику</a>
+        unassigned.forEach(a => {
+            const c = document.createElement('div');
+            c.className = 'card';
+            c.innerHTML = `
+                <div class="card-text"><span>${a.text}</span></div>
+                <div class="card-actions">
+                    <button class="btn-none" onclick="assign(${a.id}, 'none')">🔵 Я отпускаю</button>
+                    <button class="btn-infl" onclick="assign(${a.id}, 'infl')">🟡 Я влияю</button>
+                    <button class="btn-pow"  onclick="assign(${a.id}, 'pow')">🟢 Я делаю</button>
                 </div>`;
-            }
+            pool.appendChild(c);
+        });
 
-            container.innerHTML = html;
+        document.getElementById('next3').disabled =
+            !(state.anxieties.length > 0 && state.anxieties.every(a => a.zone));
+    }
+
+    /* ===== ШАГ 4: ФОРМА ===== */
+    function saveForm() {
+        state.form.can     = document.getElementById('f-can').value.trim();
+        state.form.cannot  = document.getElementById('f-cannot').value.trim();
+        state.form.but     = document.getElementById('f-but').value.trim();
+        state.form.breath  = document.getElementById('f-breath').checked;
+        save();
+        checkForm();
+    }
+
+    function checkForm() {
+        document.getElementById('next4').disabled =
+            !(state.form.can && state.form.cannot && state.form.but);
+    }
+
+    function finish() {
+        go(5);
+    }
+
+    /* ===== ШАГ 5: РЕЗУЛЬТАТЫ ===== */
+    function renderResults() {
+        const box = document.getElementById('res');
+        let h = '';
+
+        const none = state.anxieties.filter(a => a.zone === 'none');
+        const infl = state.anxieties.filter(a => a.zone === 'infl');
+        const pow  = state.anxieties.filter(a => a.zone === 'pow');
+
+        if (none.length) {
+            h += `<h3>🔵 Я ОТПУСКАЮ</h3>`;
+            h += none.map(a => `<div class="result-item">• ${a.text}</div>`).join('');
+        }
+        if (infl.length) {
+            h += `<h3 style="margin-top:20px;">🟡 Я ВЛИЯЮ</h3>`;
+            h += infl.map(a => `<div class="result-item">• ${a.text}</div>`).join('');
+        }
+        if (pow.length) {
+            h += `<h3 style="margin-top:20px;">🟢 Я ДЕЛАЮ</h3>`;
+            h += pow.map(a => `<div class="result-item">• ${a.text}</div>`).join('');
         }
 
-        function savePlan() {
-            let text = `МОИ ТОЧКИ ОПОРЫ\n\n`;
-            text += `--- НЕ В МОЕЙ ВЛАСТИ ---\n`;
-            state.anxieties.filter(a => a.zone === 'none').forEach(a => text += `• ${a.text}\n`);
-            text += `\n--- ЗОНА ВЛИЯНИЯ ---\n`;
-            state.anxieties.filter(a => a.zone === 'influence').forEach(a => text += `• ${a.text}\n`);
-            text += `\n--- В МОЕЙ ВЛАСТИ ---\n`;
-            state.anxieties.filter(a => a.zone === 'power').forEach(a => text += `• ${a.text}\n`);
-            
-            text += `\n--- МОЙ ШАГ НА СЕГОДНЯ ---\n`;
-            text += `✅ Сегодня я могу: ${state.form.can}\n`;
-            text += `⏸️ Не могу повлиять на: ${state.form.cannot}\n`;
-            text += `🌿 Но сегодня я могу: ${state.form.but}\n`;
-            
-            if (state.form.breath) {
-                text += `\n🎧 Дыхательная практика: https://youtu.be/2MUIfe49USw`;
-            }
+        h += `<h3 style="margin-top:20px;">МОЙ ОДИН ШАГ</h3>`;
+        h += `<div class="result-item">✅ Сегодня я могу: <b>${state.form.can}</b></div>`;
+        h += `<div class="result-item">⏸️ Не могу повлиять на: <b>${state.form.cannot}</b></div>`;
+        h += `<div class="result-item">🌿 Но сегодня я могу: <b>${state.form.but}</b></div>`;
 
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Твой план скопирован в буфер обмена! Можешь вставить его в заметки.');
-            }).catch(err => {
-                alert('Не удалось скопировать автоматически. Вот твой план:\n\n' + text);
-            });
+        if (state.form.breath) {
+            h += `
+                <div style="margin-top:15px; padding:15px;
+                            background:var(--accent-light);
+                            border-radius:var(--r); text-align:center;">
+                    <p style="margin-bottom:10px; font-weight:600; color:var(--text);">
+                        🎧 Твоя поддержка:
+                    </p>
+                    <a href="https://youtu.be/2MUIfe49USw"
+                       target="_blank" class="btn btn-primary">
+                        Включить дыхательную практику
+                    </a>
+                </div>`;
         }
 
-        function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Ссылка на практику скопирована!');
-            });
+        box.innerHTML = h;
+    }
+
+    /* ===== СОХРАНЕНИЕ ПЛАНА ===== */
+    function savePlan() {
+        let t = 'МОИ ТОЧКИ ОПОРЫ\n\n';
+        t += '--- 🔵 Я ОТПУСКАЮ ---\n';
+        state.anxieties.filter(a => a.zone === 'none').forEach(a => t += `• ${a.text}\n`);
+        t += '\n--- 🟡 Я ВЛИЯЮ ---\n';
+        state.anxieties.filter(a => a.zone === 'infl').forEach(a => t += `• ${a.text}\n`);
+        t += '\n--- 🟢 Я ДЕЛАЮ ---\n';
+        state.anxieties.filter(a => a.zone === 'pow').forEach(a => t += `• ${a.text}\n`);
+        t += `\n--- МОЙ ШАГ ---\n`;
+        t += `✅ ${state.form.can}\n`;
+        t += `⏸️ ${state.form.cannot}\n`;
+        t += `🌿 ${state.form.but}\n`;
+
+        if (state.form.breath) {
+            t += '\n🎧 Дыхательная практика: https://youtu.be/2MUIfe49USw';
         }
 
-        // --- ЛОГИКА ПАУЗЫ ---
-        function openPanic() {
-            document.getElementById('panicModal').classList.add('active');
-        }
+        navigator.clipboard.writeText(t)
+            .then(() => alert('План скопирован! Вставь его в заметки.'))
+            .catch(() => alert(t));
+    }
 
-        function closePanic() {
-            document.getElementById('panicModal').classList.remove('active');
-        }
+    function copyLink() {
+        navigator.clipboard.writeText(location.href)
+            .then(() => alert('Ссылка скопирована!'));
+    }
 
-        // --- ПЕРЕЗАПУСК ---
-        function restart() {
-            if (confirm('Ты уверена, что хочешь начать заново? Все текущие данные будут удалены.')) {
-                state = {
-                    screen: 1,
-                    anxieties: [],
-                    form: { can: '', cannot: '', but: '', breath: false }
-                };
-                saveState();
-                render();
-            }
-        }
-
-        // Запуск
-        init();
-    </script>
+    /* ===== СТАРТ ===== */
+    init();
+</script>
 </body>
 </html>
